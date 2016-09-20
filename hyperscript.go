@@ -2,7 +2,9 @@ package h
 
 import "strings"
 
-func Element(tagname string, attrs A, children []H) HElement {
+type A map[string]string
+
+func Element(tagname string, attrs A, children H) HElement {
 	return HElement{tagname, attrs, children}
 }
 
@@ -17,11 +19,7 @@ type H interface {
 type HElement struct {
 	TagName  string
 	Attrs    A
-	Children []H
-}
-
-type HText struct {
-	Text string
+	Children H
 }
 
 func (h HElement) Render() string {
@@ -32,18 +30,28 @@ func (h HElement) Render() string {
 		}
 	}
 
-	content := ""
+	var innerHTML string
 	if h.Children != nil {
-		for _, child := range h.Children {
-			content += child.Render()
-		}
+		innerHTML = h.Children.Render()
 	}
 
-	return "<" + h.TagName + attrs + ">" + content + "</" + h.TagName + ">"
+	return "<" + h.TagName + attrs + ">" + innerHTML + "</" + h.TagName + ">"
+}
+
+type HText struct {
+	Text string
 }
 
 func (h HText) Render() string {
 	return h.Text
 }
 
-type A map[string]string
+type HH []H
+
+func (hh HH) Render() string {
+	content := ""
+	for _, child := range hh {
+		content += child.Render()
+	}
+	return content
+}
