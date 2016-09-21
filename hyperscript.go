@@ -1,8 +1,20 @@
 package h
 
-import "strings"
+import (
+	"regexp"
+	"sort"
+	"strings"
+)
 
-type A map[string]string
+var idfinder *regexp.Regexp
+var classfinder *regexp.Regexp
+var tagmatcher *regexp.Regexp
+
+func init() {
+	idfinder = regexp.MustCompile("#\\w+")
+	classfinder = regexp.MustCompile("\\.\\w+")
+	tagmatcher = regexp.MustCompile("^\\w+")
+}
 
 func Element(tagname string, attrs A, children H) HElement {
 	return HElement{tagname, attrs, children}
@@ -23,19 +35,37 @@ type HElement struct {
 }
 
 func (h HElement) Render() string {
-	attrs := ""
-	if h.Attrs != nil {
-		for key, value := range h.Attrs {
-			attrs += " " + strings.TrimSpace(key) + "='" + strings.TrimSpace(value) + "'"
+	// the actual tagname
+	tagName := tagmatcher.FindString(h.TagName)
+	if tagName == "" {
+		tagName = "div"
+	}
+
+	// all the classes
+	classes := []string{h.Attrs["class"]}
+	for _, class := range classfinder.FindAllString(h.TagName, -1) {
+		classes = append(classes, class[1:])
+	}
+	className := strings.TrimSpace(strings.Join(classes, " "))
+	if className != "" {
+		h.Attrs["class"] = className
+	}
+
+	// the last id
+	ids := idfinder.FindAllString(h.TagName, -1)
+	if len(ids) > 0 {
+		if _, ok := h.Attrs["id"]; !ok {
+			h.Attrs["id"] = ids[len(ids)-1][1:]
 		}
 	}
 
+	// render the children
 	var innerHTML string
 	if h.Children != nil {
 		innerHTML = h.Children.Render()
 	}
 
-	return "<" + h.TagName + attrs + ">" + innerHTML + "</" + h.TagName + ">"
+	return "<" + tagName + h.Attrs.ToString() + ">" + innerHTML + "</" + tagName + ">"
 }
 
 type HText struct {
@@ -52,6 +82,21 @@ func (hh HH) Render() string {
 	content := ""
 	for _, child := range hh {
 		content += child.Render()
+	}
+	return content
+}
+
+type A map[string]string
+
+func (attrs A) ToString() (content string) {
+	var keys sort.StringSlice
+	for key, _ := range attrs {
+		keys = append(keys, key)
+	}
+	sort.Sort(keys)
+
+	for _, key := range keys {
+		content += " " + key + "='" + attrs[key] + "'"
 	}
 	return content
 }
