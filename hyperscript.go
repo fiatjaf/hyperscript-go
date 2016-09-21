@@ -2,7 +2,6 @@ package h
 
 import (
 	"regexp"
-	"sort"
 	"strings"
 )
 
@@ -89,13 +88,7 @@ func (hh HH) Render() string {
 type A map[string]string
 
 func (attrs A) ToString() (content string) {
-	var keys sort.StringSlice
-	for key, _ := range attrs {
-		keys = append(keys, key)
-	}
-	sort.Sort(keys)
-
-	for _, key := range keys {
+	for key := range attrs {
 		content += " " + key + "='" + attrs[key] + "'"
 	}
 	return content
