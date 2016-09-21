@@ -16,11 +16,14 @@ func init() {
 }
 
 func Element(tagname string, attrs A, children H) HElement {
+	if attrs == nil {
+		attrs = make(A)
+	}
 	return HElement{tagname, attrs, children}
 }
 
 func Text(text string) HText {
-	return HText{text}
+	return HText(text)
 }
 
 type H interface {
@@ -67,12 +70,10 @@ func (h HElement) Render() string {
 	return "<" + tagName + h.Attrs.ToString() + ">" + innerHTML + "</" + tagName + ">"
 }
 
-type HText struct {
-	Text string
-}
+type HText string
 
-func (h HText) Render() string {
-	return h.Text
+func (t HText) Render() string {
+	return string(t)
 }
 
 type HH []H
