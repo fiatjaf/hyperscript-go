@@ -1,6 +1,7 @@
 package h
 
 import (
+	"html"
 	"regexp"
 	"strings"
 )
@@ -22,8 +23,12 @@ func Element(tagname string, attrs A, children H) HElement {
 	return HElement{tagname, attrs, children}
 }
 
-func Text(text string) HText {
-	return HText(text)
+func HTML(html string) HHTML {
+	return HHTML(html)
+}
+
+func Text(text string) HHTML {
+	return HHTML(html.EscapeString(text))
 }
 
 type H interface {
@@ -70,9 +75,9 @@ func (h HElement) Render() string {
 	return "<" + tagName + h.Attrs.ToString() + ">" + innerHTML + "</" + tagName + ">"
 }
 
-type HText string
+type HHTML string
 
-func (t HText) Render() string {
+func (t HHTML) Render() string {
 	return string(t)
 }
 

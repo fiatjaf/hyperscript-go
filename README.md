@@ -16,16 +16,17 @@ import (
 
 func main() {
     fmt.Print(h.Element("div#container", nil, h.HH{
-        h.Element("h1", nil, h.Text("hello stranger")),
-        h.Element("p", nil,
+        h.Element("h1.title", nil, h.Text("hello stranger")),
+        h.Element(".nonsense", nil, h.HH{
             h.Element("a", h.A{"href": "#"}, h.Text("click here to do nothing")),
-        ),
+            h.HTML("<a href='#'>or here</a>"),
+        }),
     }).Render())
 }
 ```
 
-outputs `<div id='container'><h1>hello stranger</h1><p><a href='#'>click here to do nothing</a></p></div>`
+outputs `<div id='container'><h1 class='title'>hello stranger</h1><div class='nonsense'><a href='#'>click here to do nothing</a><a href='#'>or here</a></div></div>`
 
 ### be responsible
 
-this library is very naïve and will fail if pushed to awkward situations. for example, when using special characters in attribute names and values, or if you pass valid html to text nodes (if you want to do that, escape the html yourself first).
+this library is very naïve and will fail if pushed to awkward situations. for example, when using special characters in attribute names and values.
