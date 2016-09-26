@@ -95,7 +95,7 @@ type A map[string]string
 
 func (attrs A) ToString() (content string) {
 	for key := range attrs {
-		content += " " + key + "='" + attrs[key] + "'"
+		content += " " + key + `="` + attrs[key] + `"`
 	}
 	return content
 }

@@ -25,7 +25,7 @@ func main() {
 }
 ```
 
-outputs `<div id='container'><h1 class='title'>hello stranger</h1><div class='nonsense'><a href='#'>click here to do nothing</a><a href='#'>or here</a></div></div>`
+outputs `<div id="container"><h1 class="title">hello stranger</h1><div class="nonsense"><a href="#">click here to do nothing</a><a href='#'>or here</a></div></div>`
 
 ### be responsible
 
