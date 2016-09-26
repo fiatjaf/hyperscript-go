@@ -1,7 +1,6 @@
 package h
 
 import (
-	"html"
 	"regexp"
 	"strings"
 )
@@ -28,7 +27,7 @@ func HTML(html string) HHTML {
 }
 
 func Text(text string) HHTML {
-	return HHTML(html.EscapeString(text))
+	return HHTML(htmlEscaper.Replace(text))
 }
 
 type H interface {
@@ -99,3 +98,8 @@ func (attrs A) ToString() (content string) {
 	}
 	return content
 }
+
+var htmlEscaper = strings.NewReplacer(
+	`<`, "&lt;",
+	`>`, "&gt;",
+)
