@@ -1,6 +1,7 @@
 package h
 
 import (
+	"log"
 	"regexp"
 	"strings"
 )
@@ -48,8 +49,10 @@ func (h HElement) Render() string {
 	}
 
 	// all the classes
-	classes := []string{h.Attrs["class"]}
+	classes := strings.Split(h.Attrs["class"], " ")
+	log.Print("classes: ", classes)
 	for _, class := range classfinder.FindAllString(h.TagName, -1) {
+		log.Print("append ", class)
 		classes = append(classes, class[1:])
 	}
 	className := strings.TrimSpace(strings.Join(classes, " "))
